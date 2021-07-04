@@ -22,39 +22,40 @@ public class LearningEvaluation {
 
     @PreUpdate
     public void onPreUpdate() throws Exception{
-        EvaluationScoreRegistered evaluationScoreRegistered = new EvaluationScoreRegistered();
-        BeanUtils.copyProperties(this, evaluationScoreRegistered);
-        evaluationScoreRegistered.publishAfterCommit();
-
         //Following code causes dependency to external APIs
         // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+        System.out.println("@@@@@@@@@@@@@@@@@onPreUpdate@" + getEndFalg());
 
         // 평가점수가 없으면 Skip.
         if(getEndFalg() == false) return;
 
         try{
+            System.out.println("@@@@@@@@@@@@@@@@@before feign@" + getOrderNo());
             // mappings goes here
             boolean isUpdated = LearningEvaluationApplication.applicationContext.getBean(onlinestudy.external.OrderManagementService.class)
             .registerEvaluation(getOrderNo(), getScore());
-
+            System.out.println("@@@@@@@@@@@@@@@@@after feign@" + getScore());
             if(isUpdated == false){
                 throw new Exception("주문관리 서비스의 주문관리에 평가점수가 갱신되지 않음");
             }
         }catch(java.net.ConnectException ce){
+            ce.printStackTrace();
             throw new Exception("주문관리 서비스 연결 실패");
         }catch(Exception e){
+            e.printStackTrace();
             throw new Exception("주문관리 서비스 처리 실패");
         }
         
+        EvaluationScoreRegistered evaluationScoreRegistered = new EvaluationScoreRegistered();
+        BeanUtils.copyProperties(this, evaluationScoreRegistered);
+        evaluationScoreRegistered.publishAfterCommit();
+
       //onlinestudy.external.OrderManagement orderManagement = new onlinestudy.external.OrderManagement();
     
         
     }
     private boolean getEndFalg() {
-        return false;
-    }
-    @PostUpdate
-    public void onPostUpdate(){
+        return endFlg;
     }
 
     public Long getId() {

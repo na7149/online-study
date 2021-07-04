@@ -1,13 +1,11 @@
 package onlinestudy;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
 public class OrderManagementController {
@@ -18,8 +16,6 @@ public class OrderManagementController {
    @RequestMapping(value = "/orderManagements/registerEvaluation",
       method = RequestMethod.GET,
       produces = "application/json;charset=UTF-8")
-   
-  
       public boolean registerEvaluation(HttpServletRequest request, HttpServletResponse response) {
       boolean status = false;
 
@@ -35,7 +31,7 @@ public class OrderManagementController {
            orderManagementRepository.save(orderManagement);
            status = true;
      // }
-
+     System.out.println("@@@@@@@@@@@@@@@@@evaluation status@" + status);
       return status;
    }
 
